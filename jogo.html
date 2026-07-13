@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jogando — Legacy of Magic</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="fundo-magico" aria-hidden="true">
+    <div class="estrelas"></div>
+    <div class="estrelas estrelas--2"></div>
+    <div class="vinhetas"></div>
+  </div>
+
+  <main class="pagina-jogo">
+    <div id="hud">
+      <div id="hud-esquerda">
+        <span id="hud-fase">Fase 1</span>
+        <span id="hud-vidas">❤❤❤</span>
+        <span id="hud-feitico">Stupefy</span>
+      </div>
+      <div id="hud-pontos">0 pts</div>
+    </div>
+    <div id="barra-chefe" class="oculto">
+      <div id="barra-chefe-fill"></div>
+    </div>
+    <button id="btn-pausar" class="btn-pausa">⏸</button>
+    <canvas id="canvas" width="1920" height="1080"></canvas>
+  </main>
+
+  <!-- Overlay de pausa -->
+  <div id="pause-overlay">
+    <div class="cartela">
+      <h2>⏸ Pausado</h2>
+      <div class="menu-botoes">
+        <button id="btn-continuar-pausa" class="botao botao--principal">Continuar</button>
+        <a href="index.html" class="botao botao--fantasma">Menu Principal</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/pausa.js"></script>
+  <script src="js/jogo.js"></script>
+</body>
+</html>
