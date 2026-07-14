@@ -1,65 +1,60 @@
 :root {
-  --noite: #0b0d1f;
-  --noite-2: #14172f;
-  --pergaminho: #ecdfba;
-  --pergaminho-fraco: #b9ad8c;
-  --ouro: #c9a227;
-  --ouro-claro: #e8c85b;
-  --arcano: #7b5cff;
-  --perigo: #c1391f;
-  --sombra: rgba(0, 0, 0, 0.55);
+  --fundo: #14162b;
+  --fundo-card: #1c1f3a;
+  --texto: #eee6d0;
+  --texto-fraco: #a89f8c;
+  --destaque: #c9a227;
+  --perigo: #b5392a;
+  --borda: #34365a;
   --fonte-titulo: "Cinzel", serif;
   --fonte-corpo: "EB Garamond", serif;
 }
 
-* { box-sizing: border-box; }
+
 
 html, body {
   margin: 0;
   padding: 0;
   width: 100%;
   min-height: 100%;
-  background: var(--noite);
-  color: var(--pergaminho);
+  background: var(--fundo);
+  color: var(--texto);
   font-family: var(--fonte-corpo);
 }
 
-/* ---------- fundo ambiente (presente em toda página) ---------- */
+/* ---------- fundo (simples, sem animação) ---------- */
 #fundo-magico {
   position: fixed;
   inset: 0;
   z-index: 0;
-  background:
-    radial-gradient(ellipse at 20% 15%, rgba(123, 92, 255, 0.16), transparent 55%),
-    radial-gradient(ellipse at 80% 85%, rgba(201, 162, 39, 0.12), transparent 55%),
-    linear-gradient(180deg, #05060f 0%, var(--noite) 55%, #0c0f22 100%);
+  background: var(--fundo);
 }
-.estrelas, .estrelas--2 {
+#foto-fundo {
   position: absolute;
   inset: 0;
-  background-image:
-    radial-gradient(1.5px 1.5px at 10% 20%, #f4ecd1 50%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 30% 70%, #f4ecd1 50%, transparent 100%),
-    radial-gradient(1px 1px at 50% 30%, #f4ecd1 50%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 70% 60%, #f4ecd1 50%, transparent 100%),
-    radial-gradient(1px 1px at 85% 15%, #f4ecd1 50%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 92% 80%, #f4ecd1 50%, transparent 100%),
-    radial-gradient(1px 1px at 15% 90%, #f4ecd1 50%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 45% 12%, #f4ecd1 50%, transparent 100%);
-  opacity: 0.55;
-  animation: cintilar 6s ease-in-out infinite alternate;
-}
-.estrelas--2 {
-  background-size: 140% 140%;
-  transform: scale(1.3) translate(4%, -6%);
-  opacity: 0.3;
-  animation-duration: 9s;
-  animation-direction: alternate-reverse;
-}
-@keyframes cintilar { from { opacity: 0.25; } to { opacity: 0.6; } }
-.vinhetas { position: absolute; inset: 0; box-shadow: inset 0 0 18vw rgba(0,0,0,0.65); }
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 
-/* ---------- página tipo "cartão" (menu, seleção, manual, sobre, vitória...) ---------- */
+  /* ============================================================ */
+  /* 📌 COLOQUE SUA FOTO AQUI                                       */
+  /* 1. Salve a imagem dentro da pasta "images"                    */
+  /* 2. Troque "fundo-menu.png" abaixo pelo nome exato do arquivo  */
+  /* ============================================================ */
+
+  background-image: url('imagens/img_telaInicial.png');
+  
+}
+#foto-fundo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* mexa nos números abaixo (0 a 1) para a foto aparecer mais ou menos forte */
+  background: rgba(20, 22, 43, 0.72);
+}
+.estrelas, .estrelas--2, .vinhetas { display: none; }
+
+/* ---------- página tipo "cartão" ---------- */
 .pagina-cartela {
   position: relative;
   z-index: 1;
@@ -72,142 +67,97 @@ html, body {
 }
 
 .cartela {
-  position: relative;
   width: min(560px, 92vw);
   text-align: center;
-  background: linear-gradient(180deg, rgba(20, 23, 47, 0.9), rgba(11, 13, 31, 0.92));
-  border: 1px solid rgba(201, 162, 39, 0.35);
+  background: var(--fundo-card);
+  border: 1px solid var(--borda);
   border-radius: 6px;
-  padding: 3rem 2.5rem;
-  box-shadow: 0 20px 60px var(--sombra), 0 0 0 1px rgba(0,0,0,0.3) inset;
+  padding: 2.5rem 2rem;
 }
 .cartela--larga { width: min(880px, 94vw); }
 .cartela--texto { text-align: left; }
-.cartela--texto h2, .cartela--texto .eyebrow, .cartela--texto .linha-sigilo { text-align: center; }
+.cartela--texto h2, .cartela--texto .eyebrow { text-align: center; }
 
 .eyebrow {
   margin: 0 0 0.4rem;
   font-family: var(--fonte-titulo);
-  font-size: 0.72rem;
-  letter-spacing: 0.28em;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: var(--ouro);
+  color: var(--destaque);
 }
 
 .titulo-jogo, .cartela h2, .cartela h1 {
   font-family: var(--fonte-titulo);
   font-weight: 700;
-  letter-spacing: 0.02em;
-  color: var(--pergaminho);
-  text-shadow: 0 0 18px rgba(201, 162, 39, 0.35);
-  margin: 0.2rem 0;
+  color: var(--texto);
+  margin: 0.2rem 0 1.2rem;
 }
-.titulo-jogo { font-size: clamp(2.4rem, 6vw, 3.6rem); }
-.cartela h2 { font-size: clamp(1.6rem, 4vw, 2.1rem); }
-.cartela h1 { font-size: clamp(2rem, 5vw, 2.6rem); }
+.titulo-jogo { font-size: clamp(2.2rem, 5vw, 3rem); }
+.cartela h2 { font-size: clamp(1.5rem, 4vw, 1.9rem); }
+.cartela h1 { font-size: clamp(1.9rem, 5vw, 2.3rem); }
 
-.linha-sigilo {
-  width: 120px;
-  height: 2px;
-  margin: 0.9rem auto 1.4rem;
-  background: linear-gradient(90deg, transparent, var(--ouro), transparent);
-  position: relative;
-}
-.linha-sigilo::after {
-  content: "✦";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: var(--ouro-claro);
-  font-size: 0.8rem;
-  background: var(--noite-2);
-  padding: 0 0.4rem;
-}
+.linha-sigilo { display: none; }
 
-.subtitulo { font-size: 1.05rem; line-height: 1.6; color: var(--pergaminho-fraco); margin: 0 0 2rem; }
-.cartela p { line-height: 1.65; color: var(--pergaminho-fraco); }
+.subtitulo { font-size: 1rem; line-height: 1.6; color: var(--texto-fraco); margin: 0 0 2rem; }
+.cartela p { line-height: 1.6; color: var(--texto-fraco); }
 .cartela p.creditos { font-size: 0.85rem; opacity: 0.7; margin-top: 2rem; }
 
-/* ---------- botões / links estilizados como botão ---------- */
-.menu-botoes { display: flex; flex-direction: column; gap: 0.8rem; }
+/* ---------- botões ---------- */
+.menu-botoes { display: flex; flex-direction: column; gap: 0.7rem; }
 .menu-botoes--linha { flex-direction: row; justify-content: center; flex-wrap: wrap; margin-top: 1.5rem; }
 
 .botao {
   display: inline-block;
   font-family: var(--fonte-titulo);
-  font-size: 0.95rem;
-  letter-spacing: 0.03em;
-  color: var(--pergaminho);
-  background: linear-gradient(180deg, #1c2044, #12142c);
-  border: 1px solid rgba(201, 162, 39, 0.4);
+  font-size: 0.9rem;
+  color: var(--texto);
+  background: var(--fundo-card);
+  border: 1px solid var(--borda);
   border-radius: 4px;
-  padding: 0.9rem 1.4rem;
+  padding: 0.8rem 1.3rem;
   cursor: pointer;
   text-decoration: none;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
-.botao:hover {
-  transform: translateY(-2px);
-  border-color: var(--ouro-claro);
-  box-shadow: 0 6px 20px rgba(201, 162, 39, 0.25);
-  background: linear-gradient(180deg, #262b56, #171a38);
-}
-.botao:active { transform: translateY(0); }
-.botao:disabled, .botao.desabilitado {
-  opacity: 0.4;
-  cursor: not-allowed;
-  pointer-events: none;
-  transform: none;
-  box-shadow: none;
-}
+.botao:hover { background: #262a4d; border-color: var(--destaque); }
+.botao:disabled, .botao.desabilitado { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
 .botao--principal {
-  background: linear-gradient(180deg, var(--ouro-claro), var(--ouro));
-  color: #1a1305;
-  border-color: var(--ouro-claro);
+  background: var(--destaque);
+  color: #211a05;
+  border-color: var(--destaque);
   font-weight: 700;
 }
-.botao--principal:hover {
-  box-shadow: 0 8px 26px rgba(232, 200, 91, 0.4);
-  background: linear-gradient(180deg, #f2da7c, var(--ouro-claro));
-}
+.botao--principal:hover { background: #e0b93a; }
 .botao--fantasma {
   background: transparent;
-  border-color: rgba(236, 223, 186, 0.25);
-  color: var(--pergaminho-fraco);
+  border-color: var(--borda);
+  color: var(--texto-fraco);
   margin-top: 1.5rem;
 }
-.botao--fantasma:hover { border-color: var(--pergaminho); color: var(--pergaminho); box-shadow: none; }
+.botao--fantasma:hover { border-color: var(--texto); color: var(--texto); }
 .botao-icone { display: inline-block; margin-right: 0.4rem; }
 
 /* ---------- seleção de casa ---------- */
-.grade-casas { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.9rem; margin: 1.5rem 0; }
+.grade-casas { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.8rem; margin: 1.5rem 0; }
 .casa-btn {
   --cor-casa: #333;
   display: block;
   width: 100%;
   font-family: var(--fonte-titulo);
-  font-size: 1rem;
-  color: var(--pergaminho);
+  font-size: 0.95rem;
+  color: var(--texto);
   text-decoration: none;
   text-align: center;
-  background: linear-gradient(160deg, color-mix(in srgb, var(--cor-casa) 55%, #0b0d1f), #0b0d1f);
-  border: 1px solid color-mix(in srgb, var(--cor-casa) 70%, #444);
+  background: var(--cor-casa);
+  border: 1px solid var(--borda);
   border-radius: 6px;
-  padding: 1.1rem 0.8rem;
+  padding: 1rem 0.8rem;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  transition: filter 0.15s ease;
 }
-.casa-btn:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 10px 24px color-mix(in srgb, var(--cor-casa) 45%, transparent);
-  filter: brightness(1.15);
-}
-.casa-btn.selecionada {
-  outline: 2px solid var(--ouro-claro);
-  outline-offset: 2px;
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--cor-casa) 50%, transparent);
-}
+.casa-btn:hover { filter: brightness(1.15); }
+.casa-btn.selecionada { outline: 2px solid var(--destaque); outline-offset: 2px; }
 
 .selecao-duelo-colunas {
   display: grid;
@@ -216,74 +166,72 @@ html, body {
   align-items: start;
   margin: 1.5rem 0;
 }
-.selecao-duelo-colunas h3 { font-family: var(--fonte-titulo); font-size: 1rem; margin: 0 0 0.6rem; color: var(--ouro-claro); }
+.selecao-duelo-colunas h3 { font-family: var(--fonte-titulo); font-size: 0.95rem; margin: 0 0 0.6rem; color: var(--destaque); }
 .divisoria-vs {
   align-self: center;
   font-family: var(--fonte-titulo);
   font-weight: 800;
   color: var(--perigo);
-  font-size: 1.4rem;
-  text-shadow: 0 0 12px rgba(193, 57, 31, 0.6);
+  font-size: 1.3rem;
 }
-.dica-tecla { font-family: var(--fonte-corpo); font-size: 0.75rem; color: var(--pergaminho-fraco); font-style: italic; font-weight: 400; }
+.dica-tecla { font-family: var(--fonte-corpo); font-size: 0.75rem; color: var(--texto-fraco); font-style: italic; }
 @media (max-width: 640px) {
   .selecao-duelo-colunas { grid-template-columns: 1fr; }
   .divisoria-vs { display: none; }
 }
 
-/* ---------- manual ---------- */
-.bloco-manual { margin: 1.6rem 0; padding-top: 1.2rem; border-top: 1px solid rgba(201, 162, 39, 0.18); }
+/* ---------- manual / sobre ---------- */
+.bloco-manual { margin: 1.5rem 0; padding-top: 1rem; border-top: 1px solid var(--borda); }
 .bloco-manual:first-of-type { border-top: none; padding-top: 0; }
-.bloco-manual h3 { font-family: var(--fonte-titulo); font-size: 1.05rem; color: var(--ouro-claro); margin: 0 0 0.6rem; }
+.bloco-manual h3 { font-family: var(--fonte-titulo); font-size: 1rem; color: var(--destaque); margin: 0 0 0.6rem; }
 .bloco-manual--grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
 @media (max-width: 640px) { .bloco-manual--grid { grid-template-columns: 1fr; } }
 .lista-controles { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
 .lista-controles--vertical li { line-height: 1.5; }
-.lista-controles li { display: flex; align-items: center; gap: 0.6rem; color: var(--pergaminho-fraco); }
+.lista-controles li { display: flex; align-items: center; gap: 0.6rem; color: var(--texto-fraco); }
 .tecla {
   display: inline-block;
   min-width: 1.6rem;
   text-align: center;
   font-family: var(--fonte-titulo);
-  font-size: 0.78rem;
-  color: var(--pergaminho);
-  background: #1c2044;
-  border: 1px solid rgba(201, 162, 39, 0.4);
+  font-size: 0.75rem;
+  color: var(--texto);
+  background: var(--fundo-card);
+  border: 1px solid var(--borda);
   border-radius: 4px;
   padding: 0.2rem 0.5rem;
 }
 
-/* ---------- página tipo "jogo" (fullscreen, canvas) ---------- */
+/* ---------- página de jogo (fullscreen, canvas) ---------- */
 .pagina-jogo { position: relative; z-index: 1; width: 100vw; height: 100vh; overflow: hidden; }
-.pagina-jogo canvas { width: 100%; height: 100%; display: block; background: #05060f; }
+.pagina-jogo canvas { width: 100%; height: 100%; display: block; background: #0a0b16; }
 
 #hud {
   position: absolute; top: 0; left: 0; right: 0; z-index: 2;
   display: flex; justify-content: space-between;
   padding: 1rem 1.5rem;
   font-family: var(--fonte-titulo);
-  color: var(--pergaminho);
-  text-shadow: 0 2px 6px rgba(0,0,0,0.8);
+  color: var(--texto);
   pointer-events: none;
 }
 #hud-esquerda { display: flex; gap: 1.5rem; }
 #barra-chefe {
   position: absolute; top: 4.5rem; left: 50%; transform: translateX(-50%);
   width: min(500px, 70vw); height: 10px;
-  border: 1px solid var(--ouro); border-radius: 5px; overflow: hidden;
+  border: 1px solid var(--destaque); border-radius: 5px; overflow: hidden;
   background: rgba(0,0,0,0.5); z-index: 2;
 }
 #barra-chefe.oculto { display: none; }
-#barra-chefe-fill { height: 100%; width: 100%; background: linear-gradient(90deg, var(--perigo), #ff6a3d); }
+#barra-chefe-fill { height: 100%; width: 100%; background: var(--perigo); }
 
 .btn-pausa {
   position: absolute; top: 1rem; right: 1rem; z-index: 3;
-  width: 2.6rem; height: 2.6rem; border-radius: 50%;
-  border: 1px solid rgba(201, 162, 39, 0.5);
-  background: rgba(11, 13, 31, 0.7);
-  color: var(--pergaminho); font-size: 1.1rem; cursor: pointer;
+  width: 2.4rem; height: 2.4rem; border-radius: 50%;
+  border: 1px solid var(--borda);
+  background: var(--fundo-card);
+  color: var(--texto); font-size: 1rem; cursor: pointer;
 }
-.btn-pausa:hover { background: rgba(28, 32, 68, 0.85); }
+.btn-pausa:hover { background: #262a4d; }
 
 #duelo-hud {
   position: absolute; top: 0; left: 0; right: 0; z-index: 2;
@@ -292,31 +240,30 @@ html, body {
 }
 .duelo-jogador { flex: 1; max-width: 40%; }
 .duelo-direita { text-align: right; }
-.duelo-nome { font-family: var(--fonte-titulo); font-size: 0.85rem; margin-bottom: 0.3rem; text-shadow: 0 2px 6px rgba(0,0,0,0.8); }
-.barra { height: 10px; border-radius: 5px; border: 1px solid rgba(236, 223, 186, 0.35); background: rgba(0,0,0,0.5); overflow: hidden; margin-bottom: 0.35rem; }
+.duelo-nome { font-family: var(--fonte-titulo); font-size: 0.85rem; margin-bottom: 0.3rem; }
+.barra { height: 10px; border-radius: 5px; border: 1px solid var(--borda); background: rgba(0,0,0,0.5); overflow: hidden; margin-bottom: 0.35rem; }
 .barra .barra-fill { height: 100%; width: 100%; }
-.barra.vida .barra-fill { background: linear-gradient(90deg, #7a1010, #d43b3b); }
-.barra.energia .barra-fill { background: linear-gradient(90deg, #3a3fae, var(--arcano)); }
+.barra.vida .barra-fill { background: var(--perigo); }
+.barra.energia .barra-fill { background: #4c50a0; }
 .duelo-direita .barra { direction: rtl; }
-.duelo-timer { font-family: var(--fonte-titulo); font-size: 1.4rem; color: var(--ouro-claro); text-shadow: 0 0 14px rgba(201, 162, 39, 0.5); min-width: 2.5rem; text-align: center; }
+.duelo-timer { font-family: var(--fonte-titulo); font-size: 1.3rem; color: var(--destaque); min-width: 2.5rem; text-align: center; }
 .duelo-slots { position: absolute; bottom: 1rem; z-index: 2; display: flex; gap: 0.6rem; }
 #duelo-slots-esquerda { left: 1.5rem; }
 #duelo-slots-direita { right: 1.5rem; }
 .duelo-slots .slot {
   display: flex; align-items: center; gap: 0.4rem;
   font-family: var(--fonte-corpo); font-size: 0.8rem;
-  background: rgba(11, 13, 31, 0.7);
-  border: 1px solid rgba(201, 162, 39, 0.35);
+  background: var(--fundo-card);
+  border: 1px solid var(--borda);
   border-radius: 4px; padding: 0.35rem 0.6rem;
-  color: var(--pergaminho-fraco);
+  color: var(--texto-fraco);
 }
 
-/* ---------- overlay de pausa (mesma marcação nas páginas de jogo) ---------- */
+/* ---------- overlay de pausa ---------- */
 #pause-overlay {
   position: fixed; inset: 0; z-index: 10;
   display: none; align-items: center; justify-content: center;
-  background: rgba(5, 6, 15, 0.75);
-  backdrop-filter: blur(2px);
+  background: rgba(10, 11, 22, 0.85);
 }
 #pause-overlay.ativa { display: flex; }
 
@@ -327,11 +274,11 @@ html, body {
 }
 .aviso-construcao span {
   font-family: var(--fonte-titulo);
-  color: var(--pergaminho-fraco);
-  background: rgba(11, 13, 31, 0.6);
+  color: var(--texto-fraco);
+  background: var(--fundo-card);
   padding: 0.8rem 1.4rem;
   border-radius: 6px;
-  border: 1px dashed rgba(201, 162, 39, 0.4);
+  border: 1px solid var(--borda);
 }
 
 .oculto { display: none !important; }
