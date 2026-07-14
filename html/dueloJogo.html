@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Duelo — Legacy of Magic</title>
+<link rel="stylesheet" href="css/style.css">
+<script src="/js/dueloJogo.js" defer></script>
+</head>
+<body>
+  <div id="fundo-magico" aria-hidden="true">
+    <div class="estrelas"></div>
+    <div class="estrelas estrelas--2"></div>
+    <div class="vinhetas"></div>
+  </div>
+
+  <main class="pagina-jogo">
+    <div id="duelo-hud">
+      <div class="duelo-jogador duelo-esquerda">
+        <div class="duelo-nome" id="duelo-nome-p1">P1</div>
+        <div class="barra vida"><div id="duelo-vida-p1" class="barra-fill"></div></div>
+        <div class="barra energia"><div id="duelo-energia-p1" class="barra-fill"></div></div>
+      </div>
+      <div class="duelo-timer" id="duelo-timer">60</div>
+      <div class="duelo-jogador duelo-direita">
+        <div class="duelo-nome" id="duelo-nome-p2">P2</div>
+        <div class="barra vida"><div id="duelo-vida-p2" class="barra-fill"></div></div>
+        <div class="barra energia"><div id="duelo-energia-p2" class="barra-fill"></div></div>
+      </div>
+    </div>
+    <button id="btn-pausar" class="btn-pausa">⏸</button>
+    <canvas id="canvas-duelo" width="1920" height="1080"></canvas>
+    <div id="duelo-slots-esquerda" class="duelo-slots">
+      <div class="slot"><span class="tecla">1</span>Stupefy</div>
+      <div class="slot"><span class="tecla">2</span>Protego</div>
+      <div class="slot"><span class="tecla">3</span>Bombarda</div>
+    </div>
+    <div id="duelo-slots-direita" class="duelo-slots">
+      <div class="slot"><span class="tecla">J</span>Stupefy</div>
+      <div class="slot"><span class="tecla">K</span>Protego</div>
+      <div class="slot"><span class="tecla">L</span>Bombarda</div>
+    </div>
+  </main>
+
+  <div id="pause-overlay">
+    <div class="cartela">
+      <h2>⏸ Pausado</h2>
+      <div class="menu-botoes">
+        <button id="btn-continuar-pausa" class="botao botao--principal">Continuar</button>
+        <a href="index.html" class="botao botao--fantasma">Menu Principal</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/pausa.js"></script>
+  <script src="js/duelo-jogo.js"></script>
+</body>
+</html>

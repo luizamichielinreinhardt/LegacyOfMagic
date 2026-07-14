@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Derrota — Legacy of Magic</title>
+<link rel="stylesheet" href="css/style.css">
+<script src=""></script>
+</head>
+<body>
+  <div id="fundo-magico" aria-hidden="true">
+    <div class="estrelas"></div>
+    <div class="estrelas estrelas--2"></div>
+    <div class="vinhetas"></div>
+  </div>
+
+  <main class="pagina-cartela">
+    <div class="cartela">
+      <h1>💀 Derrota</h1>
+      <p>As forças das trevas venceram...</p>
+      <p id="pontos-finais"></p>
+      <div class="menu-botoes">
+        <a id="btn-jogar-de-novo" class="botao botao--principal" href="1player.html">Jogar novamente</a>
+        <a href="index.html" class="botao botao--fantasma">Menu Principal</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const casa = params.get("casa");
+    const pontos = params.get("pontos");
+    if (casa) document.getElementById("btn-jogar-de-novo").href = `jogo.html?casa=${casa}`;
+    if (pontos) document.getElementById("pontos-finais").textContent = `Pontuação: ${pontos}`;
+  </script>
+</body>
+</html>
