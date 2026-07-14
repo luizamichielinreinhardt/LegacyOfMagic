@@ -1,6 +1,6 @@
-// duelo-jogo.js — placeholder da engine do modo duelo.
-// Quando a engine real existir, implemente aqui window.iniciarDuelo(casaP1, casaP2)
-// e navegue para fim-duelo.html?vencedor=...&p1=...&p2=... quando a partida acabar.
+// duelo-jogo.js — placeholder da engine do modo duelo
+// TODO: implementar window.iniciarDuelo(casaP1, casaP2) e redirecionar
+// para fim-duelo.html?vencedor=...&p1=...&p2=... ao fim da partida
 (function () {
   "use strict";
 
@@ -22,32 +22,27 @@
   const ctx = canvas.getContext("2d");
 
   function desenharPlaceholder() {
-    const largura = canvas.width;
-    const altura = canvas.height;
+    const w = canvas.width;
+    const h = canvas.height;
+
     ctx.fillStyle = "#05060f";
-    ctx.fillRect(0, 0, largura, altura);
+    ctx.fillRect(0, 0, w, h);
 
-    ctx.fillStyle = "#ecdfba";
     ctx.textAlign = "center";
+    ctx.fillStyle = "#ecdfba";
     ctx.font = "600 42px Cinzel, serif";
-    ctx.fillText("Motor de duelo ainda não conectado", largura / 2, altura / 2 - 30);
+    ctx.fillText("Motor de duelo ainda não conectado", w / 2, h / 2 - 30);
 
-    ctx.font = "28px 'EB Garamond', serif";
     ctx.fillStyle = "#b9ad8c";
-    ctx.fillText(`${NOME_CASA[p1] || p1}  vs  ${NOME_CASA[p2] || p2}`, largura / 2, altura / 2 + 20);
-    ctx.fillText("Use os botões abaixo só para testar a navegação", largura / 2, altura / 2 + 60);
+    ctx.font = "28px 'EB Garamond', serif";
+    ctx.fillText(`${NOME_CASA[p1] || p1}  vs  ${NOME_CASA[p2] || p2}`, w / 2, h / 2 + 20);
+    ctx.fillText("Use os botões abaixo só para testar a navegação", w / 2, h / 2 + 60);
   }
   desenharPlaceholder();
 
-  // Botões de teste temporários para validar o fluxo de fim de duelo
+  // botões temporários pra testar o fluxo de fim de duelo
   const testeDiv = document.createElement("div");
-  testeDiv.style.position = "absolute";
-  testeDiv.style.bottom = "5rem";
-  testeDiv.style.left = "50%";
-  testeDiv.style.transform = "translateX(-50%)";
-  testeDiv.style.display = "flex";
-  testeDiv.style.gap = "0.8rem";
-  testeDiv.style.zIndex = "2";
+  testeDiv.style.cssText = "position:absolute;bottom:5rem;left:50%;transform:translateX(-50%);display:flex;gap:0.8rem;z-index:2";
   testeDiv.innerHTML = `
     <a class="botao botao--principal" href="fim-duelo.html?vencedor=${encodeURIComponent(NOME_CASA[p1] || p1)}&p1=${p1}&p2=${p2}">P1 vence</a>
     <a class="botao botao--fantasma" href="fim-duelo.html?vencedor=${encodeURIComponent(NOME_CASA[p2] || p2)}&p1=${p1}&p2=${p2}" style="margin-top:0">P2 vence</a>
