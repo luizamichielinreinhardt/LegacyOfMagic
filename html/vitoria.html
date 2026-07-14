@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vitória! — Legacy of Magic</title>
-<link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vitória! — Legacy of Magic</title>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
   <div id="fundo-magico" aria-hidden="true">
@@ -19,19 +19,23 @@
       <p>Parabéns! Você concluiu o treinamento dos bruxos e protegeu Hogwarts!</p>
       <p id="pontos-finais"></p>
       <div class="menu-botoes">
-        <a id="btn-jogar-de-novo" class="botao botao--principal" href="1player.html">Jogar novamente</a>
-        <a href="index.html" class="botao botao--fantasma">Menu Principal</a>
+        <a id="btn-jogar-de-novo" class="botao botao--principal" href="/html/1player.html">Jogar novamente</a>
+        <a href="/html/index.html" class="botao botao--fantasma">Menu Principal</a>
       </div>
     </div>
   </main>
 
   <script>
-    // Lê a casa da URL (?casa=...) pra permitir "jogar novamente" com a mesma casa
+    // Lê a casa e pontos da URL para personalizar a tela e o botão de reinício
     const params = new URLSearchParams(window.location.search);
     const casa = params.get("casa");
     const pontos = params.get("pontos");
-    if (casa) document.getElementById("btn-jogar-de-novo").href = `jogo.html?casa=${casa}`;
-    if (pontos) document.getElementById("pontos-finais").textContent = `Pontuação: ${pontos}`;
+    if (casa) {
+      document.getElementById("btn-jogar-de-novo").href = `/html/jogo.html?casa=${casa}`;
+    }
+    if (pontos) {
+      document.getElementById("pontos-finais").textContent = `Pontuação: ${pontos}`;
+    }
   </script>
 </body>
 </html>
