@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sobre — Legacy of Magic</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .perfil-time {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .membro {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      background: rgba(11, 13, 31, 0.6);
+      border: 1px solid rgba(201, 162, 39, 0.2);
+      padding: 1.2rem;
+      border-radius: 8px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .membro:hover {
+      transform: translateX(10px);
+      border-color: rgba(201, 162, 39, 0.6);
+      background: rgba(20, 23, 47, 0.8);
+    }
+    .membro-avatar {
+      width: 70px;
+      height: 70px;
+      background: linear-gradient(135deg, var(--ouro-claro), var(--ouro));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: var(--noite);
+      font-family: var(--fonte-titulo);
+      font-weight: bold;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(201, 162, 39, 0.3);
+    }
+    .membro-info h3 {
+      color: var(--ouro-claro);
+      margin: 0 0 0.3rem 0;
+      font-family: var(--fonte-titulo);
+      font-size: 1.3rem;
+    }
+    .membro-info p {
+      margin: 0;
+      font-size: 0.95rem;
+      color: var(--pergaminho-fraco);
+    }
+  </style>
+</head>
+<body>
+  <div id="fundo-magico" aria-hidden="true">
+    <div class="estrelas"></div>
+    <div class="estrelas estrelas--2"></div>
+    <div class="vinhetas"></div>
+  </div>
+
+  <main class="pagina-cartela">
+    <div class="cartela cartela--larga cartela--texto">
+      <p class="eyebrow">Nos Bastidores</p>
+      <h2 style="text-align: center;">As Criadoras do Jogo</h2>
+      <div class="linha-sigilo" aria-hidden="true"></div>
+      
+      <p style="text-align: center; margin-bottom: 2rem;">Este jogo foi desenvolvido com muita magia e dedicação por três bruxas incríveis!</p>
+
+      <div class="perfil-time">
+        <div class="membro">
+          <div class="membro-avatar" style="background: linear-gradient(135deg, #ecb939, #c9a227);">E</div>
+          <div class="membro-info">
+            <h3>Evelin Piva</h3>
+            <p>Representante da <strong>Lufa-Lufa</strong>. Fez a mágica acontecer organizando os feitiços e estruturando as poções que movem as engrenagens do projeto!</p>
+          </div>
+        </div>
+
+        <div class="membro">
+          <div class="membro-avatar" style="background: linear-gradient(135deg, #4ade80, #1a472a); color: white;">L</div>
+          <div class="membro-info">
+            <h3 style="color: #4ade80;">Luíza Michielin</h3>
+            <p>Defensora da <strong>Sonserina</strong>. Ambiciosa e astuta, garantiu que a interface e as artes visuais tivessem a estética digna de um bruxo puro-sangue!</p>
+          </div>
+        </div>
+
+        <div class="membro">
+          <div class="membro-avatar" style="background: linear-gradient(135deg, #ff4a4a, #740001); color: white;">J</div>
+          <div class="membro-info">
+            <h3 style="color: #ff4a4a;">Julia Zamarch</h3>
+            <p>Corajosa da <strong>Grifinória</strong>. Liderou a linha de frente do desenvolvimento lutando bravamente contra os bugs e monstros da programação!</p>
+          </div>
+        </div>
+      </div>
+
+      <p class="creditos" style="text-align: center; margin-top: 3rem;">Desenvolvido com HTML5 Canvas, CSS e JavaScript puro (Sem bibliotecas!).</p>
+      
+      <div style="text-align: center;">
+        <a href="/html/index.html" class="botao botao--fantasma">← Voltar ao Menu</a>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

@@ -221,7 +221,23 @@ const SPRITES_CASA = {
 
         // Desenhar Jogador (Imagem ou Círculo)
         if (jogador.imgCarregada && framesArray && framesArray[jogador.frameAtual]) {
-            ctx.drawImage(framesArray[jogador.frameAtual], jogador.x, jogador.y, jogador.w, jogador.h);
+            let imgAtual = framesArray[jogador.frameAtual];
+            let drawW = jogador.w;
+            let drawH = jogador.h;
+            let offsetX = 0;
+            let offsetY = 0;
+
+            // --- AJUSTE DE TAMANHO DOS SPRITES ---
+            // Você pode alterar o número (ex: 1.75) para aumentar ou diminuir o sprite quando atira
+            if (jogador.estadoAtual === 'feit') {
+                const escalaFeit = 1.75; // ← Mude isso se quiser o tiro maior ou menor
+                drawW = jogador.w * escalaFeit;
+                drawH = jogador.h * escalaFeit;
+                offsetX = -(drawW - jogador.w) / 2;
+                offsetY = -(drawH - jogador.h) / 2;
+            }
+
+            ctx.drawImage(imgAtual, jogador.x + offsetX, jogador.y + offsetY, drawW, drawH);
         } else {
             ctx.fillStyle = jogador.cor;
             ctx.shadowBlur = 15;

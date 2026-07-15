@@ -281,13 +281,31 @@ const SPRITES_CASA = {
             let imgAtual = framesArray ? framesArray[p.frameAtual] : null;
 
             if (p.imgCarregada && imgAtual) {
+                let drawW = p.w;
+                let drawH = p.h;
+                let offsetX = 0;
+                let offsetY = 0;
+
+                // --- AJUSTE DE TAMANHO DOS SPRITES ---
+                // Você pode alterar o número (ex: 1.75) para aumentar ou diminuir o sprite quando atira
+                if (p.estadoAtual === 'feit') {
+                    const escalaFeit = 1.75; // ← Mude isso se quiser o tiro maior ou menor
+                    drawW = p.w * escalaFeit;
+                    drawH = p.h * escalaFeit;
+                    offsetX = -(drawW - p.w) / 2;
+                    offsetY = -(drawH - p.h) / 2;
+                }
+
                 // Se for o Player 2, espelha a imagem para ele olhar para a esquerda
                 if (p === p2) {
+                    ctx.save();
                     ctx.translate(p.x + p.w, p.y);
                     ctx.scale(-1, 1);
-                    ctx.drawImage(imgAtual, 0, 0, p.w, p.h);
+                    // Como a escala foi invertida, precisamos ajustar o X de forma oposta
+                    ctx.drawImage(imgAtual, -offsetX, offsetY, drawW, drawH);
+                    ctx.restore();
                 } else {
-                    ctx.drawImage(imgAtual, p.x, p.y, p.w, p.h);
+                    ctx.drawImage(imgAtual, p.x + offsetX, p.y + offsetY, drawW, drawH);
                 }
             } else {
                 ctx.beginPath();
@@ -299,6 +317,8 @@ const SPRITES_CASA = {
             if (p.atordoado > 0) {
                 ctx.strokeStyle = "#ecdfba";
                 ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.arc(p.x + p.w/2, p.y + p.h/2, p.w/2 + 5, 0, Math.PI * 2);
                 ctx.stroke();
             }
 
