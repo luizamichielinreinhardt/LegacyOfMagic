@@ -31,9 +31,24 @@ const CORES_CASA = {
 };
 
 const SPRITES_CASA = {
-    grifinoria: '/img/sprite_subindo1_julia.png',
-    sonserina: '/img/sprite_subindo1_luiza.png',
-    lufalufa: '/img/sprite_subindo1_evelin.png'
+    grifinoria: {
+        subindo: ['/img/sprite_subindo1_julia.png', '/img/sprite_subindo2_julia.png', '/img/sprite_subindo3_julia.png'],
+        desc: ['/img/sprite_desc1_julia.png', '/img/sprite_desc2_julia.png', '/img/sprite_desc3_julia.png'],
+        feit: ['/img/sprite_feit1_julia.png', '/img/sprite_feit2_julia.png'],
+        sofre: ['/img/sprite_sofre1_julia.png', '/img/sprite_sofre2_julia.png']
+    },
+    sonserina: {
+        subindo: ['/img/sprite_subindo1_luiza.png', '/img/sprite_subindo2_luiza.png', '/img/sprite_subindo3_luiza.png'],
+        desc: ['/img/sprite_desc1_luiza.png', '/img/sprite_desc2_luiza.png', '/img/sprite_desc3_luiza.png'],
+        feit: ['/img/sprite_feit_luiza.png'],
+        sofre: ['/img/sprite_sofre1_luiza.png', '/img/sprite_sofre2_luiza.png']
+    },
+    lufalufa: {
+        subindo: ['/img/sprite_subindo1_evelin.png', '/img/sprite_subindo2_evelin.png', '/img/sprite_subindo3_evelin.png'],
+        desc: ['/img/sprite_desc1_evelin.png', '/img/sprite_desc2_evelin.png', '/img/sprite_desc3_evelin.png'],
+        feit: ['/img/sprite_feit1_evelin.png', '/img/sprite_feit2_evelin.png'],
+        sofre: ['/img/evelin_sofre1_evelin.png', '/img/evelin_sofre2_evelin.png']
+    }
 };
 
 // Motor Principal 1 Player
@@ -55,25 +70,35 @@ const SPRITES_CASA = {
     const jogador = { 
         x: 150, 
         y: 500, 
-        w: 90, 
-        h: 66, 
+        w: 200, 
+        h: 146, 
         cor: corCasa,
-        img: null,
-        imgCarregada: false
+        imgs: {},
+        imgCarregada: false,
+        estadoAtual: 'subindo',
+        frameAtual: 0,
+        frameTick: 0,
+        estadoTempTimer: 0
     };
 
     // Pré-carregamento da imagem do Jogador
-    const caminhoSprite = SPRITES_CASA[casa];
-    if (caminhoSprite) {
-        const imgObj = new Image();
-        imgObj.src = caminhoSprite;
-        imgObj.onload = () => {
-            jogador.img = imgObj;
-            jogador.imgCarregada = true;
-        };
-        imgObj.onerror = () => {
-            console.warn(`Imagem ${caminhoSprite} não encontrada. Usando modo de compatibilidade gráfico (bola).`);
-        };
+    const animacoes = SPRITES_CASA[casa];
+    if (animacoes) {
+        let totalImgs = 0;
+        let carregadas = 0;
+        for (let estado in animacoes) {
+            jogador.imgs[estado] = [];
+            animacoes[estado].forEach(caminho => {
+                totalImgs++;
+                const imgObj = new Image();
+                imgObj.src = caminho;
+                imgObj.onload = () => {
+                    carregadas++;
+                    if (carregadas === totalImgs) jogador.imgCarregada = true;
+                };
+                jogador.imgs[estado].push(imgObj);
+            });
+        }
     }
 
     let projeteis = [];
@@ -85,6 +110,10 @@ const SPRITES_CASA = {
         teclas[e.key.toLowerCase()] = true;
         if (e.key === " ") { 
             projeteis.push(new Projetil(jogador.x + jogador.w, jogador.y + jogador.h/2, 1, 'jogador', corCasa));
+            jogador.estadoAtual = 'feit';
+            jogador.estadoTempTimer = 15;
+            jogador.frameAtual = 0;
+            jogador.frameTick = 0;
         }
     });
     window.addEventListener("keyup", (e) => teclas[e.key.toLowerCase()] = false);
@@ -101,9 +130,10 @@ const SPRITES_CASA = {
         }
 
         // Movimentação
+        let novoEstado = 'subindo';
         const vel = 8;
-        if (teclas["w"] && jogador.y > 50) jogador.y -= vel;
-        if (teclas["s"] && jogador.y < canvas.height - jogador.h - 50) jogador.y += vel;
+        if (teclas["w"] && jogador.y > 50) { jogador.y -= vel; novoEstado = 'subindo'; }
+        if (teclas["s"] && jogador.y < canvas.height - jogador.h - 50) { jogador.y += vel; novoEstado = 'desc'; }
         if (teclas["a"] && jogador.x > 50) jogador.x -= vel;
         if (teclas["d"] && jogador.x < canvas.width / 2) jogador.x += vel;
 
@@ -147,6 +177,10 @@ const SPRITES_CASA = {
                 inimigo.y < jogador.y + jogador.h && inimigo.y + inimigo.h > jogador.y) {
                 inimigo.ativo = false;
                 vida--;
+                jogador.estadoAtual = 'sofre';
+                jogador.estadoTempTimer = 30;
+                jogador.frameAtual = 0;
+                jogador.frameTick = 0;
                 atualizarHUD();
                 if (vida <= 0) {
                     window.location.href = `/html/derrota.html?casa=${casa}&pontos=${pontos}`;
@@ -156,6 +190,28 @@ const SPRITES_CASA = {
 
         inimigos = inimigos.filter(i => i.ativo && i.x > -50);
 
+        // Atualizar Animação
+        if (jogador.estadoTempTimer > 0) {
+            jogador.estadoTempTimer--;
+        } else {
+            if (jogador.estadoAtual !== novoEstado) {
+                jogador.estadoAtual = novoEstado;
+                jogador.frameAtual = 0;
+                jogador.frameTick = 0;
+            }
+        }
+
+        jogador.frameTick++;
+        if (jogador.frameTick >= 8) {
+            jogador.frameTick = 0;
+            jogador.frameAtual++;
+        }
+        
+        let framesArray = jogador.imgs[jogador.estadoAtual] || jogador.imgs['subindo'];
+        if (jogador.frameAtual >= framesArray?.length) {
+            jogador.frameAtual = 0;
+        }
+
         // Renderização
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -164,8 +220,8 @@ const SPRITES_CASA = {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         // Desenhar Jogador (Imagem ou Círculo)
-        if (jogador.imgCarregada && jogador.img) {
-            ctx.drawImage(jogador.img, jogador.x, jogador.y, jogador.w, jogador.h);
+        if (jogador.imgCarregada && framesArray && framesArray[jogador.frameAtual]) {
+            ctx.drawImage(framesArray[jogador.frameAtual], jogador.x, jogador.y, jogador.w, jogador.h);
         } else {
             ctx.fillStyle = jogador.cor;
             ctx.shadowBlur = 15;

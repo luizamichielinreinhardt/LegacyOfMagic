@@ -50,9 +50,24 @@ const CORES_CASA = {
 };
 
 const SPRITES_CASA = {
-    grifinoria: '/img/sprite_subindo1_julia.png',
-    sonserina: '/img/sprite_subindo1_luiza.png',
-    lufalufa: '/img/sprite_subindo1_evelin.png'
+    grifinoria: {
+        subindo: ['/img/sprite_subindo1_julia.png', '/img/sprite_subindo2_julia.png', '/img/sprite_subindo3_julia.png'],
+        desc: ['/img/sprite_desc1_julia.png', '/img/sprite_desc2_julia.png', '/img/sprite_desc3_julia.png'],
+        feit: ['/img/sprite_feit1_julia.png', '/img/sprite_feit2_julia.png'],
+        sofre: ['/img/sprite_sofre1_julia.png', '/img/sprite_sofre2_julia.png']
+    },
+    sonserina: {
+        subindo: ['/img/sprite_subindo1_luiza.png', '/img/sprite_subindo2_luiza.png', '/img/sprite_subindo3_luiza.png'],
+        desc: ['/img/sprite_desc1_luiza.png', '/img/sprite_desc2_luiza.png', '/img/sprite_desc3_luiza.png'],
+        feit: ['/img/sprite_feit_luiza.png'],
+        sofre: ['/img/sprite_sofre1_luiza.png', '/img/sprite_sofre2_luiza.png']
+    },
+    lufalufa: {
+        subindo: ['/img/sprite_subindo1_evelin.png', '/img/sprite_subindo2_evelin.png', '/img/sprite_subindo3_evelin.png'],
+        desc: ['/img/sprite_desc1_evelin.png', '/img/sprite_desc2_evelin.png', '/img/sprite_desc3_evelin.png'],
+        feit: ['/img/sprite_feit1_evelin.png', '/img/sprite_feit2_evelin.png'],
+        sofre: ['/img/evelin_sofre1_evelin.png', '/img/evelin_sofre2_evelin.png']
+    }
 };
 
 // Motor Principal do Duelo
@@ -73,36 +88,40 @@ const SPRITES_CASA = {
 
     // Jogadores
     const p1 = {
-        x: 150, y: 500, w: 90, h: 66, casa: p1Casa, cor: CORES_CASA[p1Casa],
+        x: 150, y: 500, w: 200, h: 146, casa: p1Casa, cor: CORES_CASA[p1Casa],
         vida: 100, energia: 100, atordoado: 0, escudo: 0, cd: { 1: 0, 2: 0, 3: 0 },
-        img: null, imgCarregada: false
+        imgs: {}, imgCarregada: false, estadoAtual: 'subindo', frameAtual: 0, frameTick: 0, estadoTempTimer: 0
     };
 
     const p2 = {
-        x: 1680, y: 500, w: 90, h: 66, casa: p2Casa, cor: CORES_CASA[p2Casa],
+        x: 1680, y: 500, w: 200, h: 146, casa: p2Casa, cor: CORES_CASA[p2Casa],
         vida: 100, energia: 100, atordoado: 0, escudo: 0, cd: { 1: 0, 2: 0, 3: 0 },
-        img: null, imgCarregada: false
+        imgs: {}, imgCarregada: false, estadoAtual: 'subindo', frameAtual: 0, frameTick: 0, estadoTempTimer: 0
     };
 
-    // Carregamento de imagem P1
-    if (SPRITES_CASA[p1.casa]) {
-        const imgP1 = new Image();
-        imgP1.src = SPRITES_CASA[p1.casa];
-        imgP1.onload = () => {
-            p1.img = imgP1;
-            p1.imgCarregada = true;
-        };
+    function carregarSprites(atleta) {
+        const animacoes = SPRITES_CASA[atleta.casa];
+        if (animacoes) {
+            let totalImgs = 0;
+            let carregadas = 0;
+            for (let estado in animacoes) {
+                atleta.imgs[estado] = [];
+                animacoes[estado].forEach(caminho => {
+                    totalImgs++;
+                    const imgObj = new Image();
+                    imgObj.src = caminho;
+                    imgObj.onload = () => {
+                        carregadas++;
+                        if (carregadas === totalImgs) atleta.imgCarregada = true;
+                    };
+                    atleta.imgs[estado].push(imgObj);
+                });
+            }
+        }
     }
 
-    // Carregamento de imagem P2
-    if (SPRITES_CASA[p2.casa]) {
-        const imgP2 = new Image();
-        imgP2.src = SPRITES_CASA[p2.casa];
-        imgP2.onload = () => {
-            p2.img = imgP2;
-            p2.imgCarregada = true;
-        };
-    }
+    carregarSprites(p1);
+    carregarSprites(p2);
 
     let projeteis = [];
     let tempoRestante = 60;
@@ -138,6 +157,10 @@ const SPRITES_CASA = {
         } else {
             const spawnX = dir === 1 ? atleta.x + atleta.w : atleta.x - 20;
             projeteis.push(new Projetil(spawnX, atleta.y + atleta.h / 2 - 8, dir, dono, spell.cor, spell));
+            atleta.estadoAtual = 'feit';
+            atleta.estadoTempTimer = 15;
+            atleta.frameAtual = 0;
+            atleta.frameTick = 0;
         }
 
         atleta.cd[slot] = spell.cooldown;
@@ -170,25 +193,50 @@ const SPRITES_CASA = {
         }
 
         const vel = 8;
+        let novoEstadoP1 = 'subindo';
+        let novoEstadoP2 = 'subindo';
+
         // Movimento P1 (W, S, A, D)
         if (p1.atordoado <= 0) {
-            if (teclas["w"] && p1.y > 100) p1.y -= vel;
-            if (teclas["s"] && p1.y < canvas.height - p1.h - 100) p1.y += vel;
+            if (teclas["w"] && p1.y > 100) { p1.y -= vel; novoEstadoP1 = 'subindo'; }
+            if (teclas["s"] && p1.y < canvas.height - p1.h - 100) { p1.y += vel; novoEstadoP1 = 'desc'; }
             if (teclas["a"] && p1.x > 50) p1.x -= vel;
             if (teclas["d"] && p1.x < 800) p1.x += vel;
-        } else { p1.atordoado--; }
+        } else { p1.atordoado--; novoEstadoP1 = 'sofre'; }
 
         // Movimento P2 (Setas)
         if (p2.atordoado <= 0) {
-            if (teclas["arrowup"] && p2.y > 100) p2.y -= vel;
-            if (teclas["arrowdown"] && p2.y < canvas.height - p2.h - 100) p2.y += vel;
+            if (teclas["arrowup"] && p2.y > 100) { p2.y -= vel; novoEstadoP2 = 'subindo'; }
+            if (teclas["arrowdown"] && p2.y < canvas.height - p2.h - 100) { p2.y += vel; novoEstadoP2 = 'desc'; }
             if (teclas["arrowleft"] && p2.x > 1000) p2.x -= vel;
             if (teclas["arrowright"] && p2.x < canvas.width - p2.w - 50) p2.x += vel;
-        } else { p2.atordoado--; }
+        } else { p2.atordoado--; novoEstadoP2 = 'sofre'; }
 
         [p1, p2].forEach(p => {
             if (p.escudo > 0) p.escudo--;
             for (let k in p.cd) { if (p.cd[k] > 0) p.cd[k]--; }
+
+            const novoEstado = (p === p1) ? novoEstadoP1 : novoEstadoP2;
+            if (p.estadoTempTimer > 0) {
+                p.estadoTempTimer--;
+            } else {
+                if (p.estadoAtual !== novoEstado) {
+                    p.estadoAtual = novoEstado;
+                    p.frameAtual = 0;
+                    p.frameTick = 0;
+                }
+            }
+
+            p.frameTick++;
+            if (p.frameTick >= 8) {
+                p.frameTick = 0;
+                p.frameAtual++;
+            }
+            
+            let framesArray = p.imgs[p.estadoAtual] || p.imgs['subindo'];
+            if (p.frameAtual >= framesArray?.length) {
+                p.frameAtual = 0;
+            }
         });
 
         projeteis = projeteis.filter(p => {
@@ -200,6 +248,10 @@ const SPRITES_CASA = {
                 
                 if (alvo.escudo <= 0) {
                     alvo.vida -= p.dano;
+                    alvo.estadoAtual = 'sofre';
+                    alvo.estadoTempTimer = 30;
+                    alvo.frameAtual = 0;
+                    alvo.frameTick = 0;
                     if (p.atordoa > 0) alvo.atordoado = p.atordoa * 60;
                 }
                 atualizarHUD();
@@ -225,14 +277,17 @@ const SPRITES_CASA = {
             ctx.shadowBlur = p.escudo > 0 ? 30 : 10;
             ctx.shadowColor = p.escudo > 0 ? "#4ade80" : p.cor;
 
-            if (p.imgCarregada && p.img) {
+            let framesArray = p.imgs[p.estadoAtual] || p.imgs['subindo'];
+            let imgAtual = framesArray ? framesArray[p.frameAtual] : null;
+
+            if (p.imgCarregada && imgAtual) {
                 // Se for o Player 2, espelha a imagem para ele olhar para a esquerda
                 if (p === p2) {
                     ctx.translate(p.x + p.w, p.y);
                     ctx.scale(-1, 1);
-                    ctx.drawImage(p.img, 0, 0, p.w, p.h);
+                    ctx.drawImage(imgAtual, 0, 0, p.w, p.h);
                 } else {
-                    ctx.drawImage(p.img, p.x, p.y, p.w, p.h);
+                    ctx.drawImage(imgAtual, p.x, p.y, p.w, p.h);
                 }
             } else {
                 ctx.beginPath();

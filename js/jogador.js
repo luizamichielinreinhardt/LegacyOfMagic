@@ -59,7 +59,7 @@ class Jogador extends Obj {
     _lastDir = 0
 
     constructor(x, y, casa = 'grifinoria') {
-        super(x, y, 90, 66, null)
+        super(x, y, 200, 146, null)
         this.casa = casa
         this.personagem = PERSONAGEM_CASA[casa] || null
         this.sprites = SPRITES_JOGADOR[casa] || null
