@@ -1,5 +1,3 @@
-// Lógica exclusiva da página duelo.html — escolhe as casas de P1 e P2
-// e monta o link "Iniciar Duelo" -> duelo-jogo.html?p1=...&p2=...
 (function () {
   "use strict";
 
@@ -17,7 +15,8 @@
 
   function atualizarLinkIniciar() {
     if (estado.p1 && estado.p2) {
-      btnIniciar.href = `duelo-jogo.html?p1=${estado.p1}&p2=${estado.p2}`;
+      // Corrigido de duelo-jogo.html para dueloJogo.html
+      btnIniciar.href = `/html/dueloJogo.html?p1=${estado.p1}&p2=${estado.p2}`;
       btnIniciar.classList.remove("desabilitado");
     } else {
       btnIniciar.href = "#";
@@ -43,7 +42,7 @@
     });
   });
 
-  // Atalhos de teclado (mesma ideia indicada nas dicas da tela)
+  // Atalhos de teclado
   document.addEventListener("keydown", (ev) => {
     const tecla = ev.key.toLowerCase();
     if (tecla === "w") mover(gradeP1, "highlightP1", -1);
