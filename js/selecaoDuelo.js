@@ -16,7 +16,7 @@
   function atualizarLinkIniciar() {
     if (estado.p1 && estado.p2) {
       // Corrigido de duelo-jogo.html para dueloJogo.html
-      btnIniciar.href = `/html/dueloJogo.html?p1=${estado.p1}&p2=${estado.p2}`;
+      btnIniciar.href = `./dueloJogo.html?p1=${estado.p1}&p2=${estado.p2}`;
       btnIniciar.classList.remove("desabilitado");
     } else {
       btnIniciar.href = "#";

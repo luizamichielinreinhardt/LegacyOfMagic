@@ -51,22 +51,22 @@ const CORES_CASA = {
 
 const SPRITES_CASA = {
     grifinoria: {
-        subindo: ['/img/sprite_subindo1_julia.png', '/img/sprite_subindo2_julia.png', '/img/sprite_subindo3_julia.png'],
-        desc: ['/img/sprite_desc1_julia.png', '/img/sprite_desc2_julia.png', '/img/sprite_desc3_julia.png'],
-        feit: ['/img/sprite_feit1_julia.png', '/img/sprite_feit2_julia.png'],
-        sofre: ['/img/sprite_sofre1_julia.png', '/img/sprite_sofre2_julia.png']
+        subindo: ['../img/sprite_subindo1_julia.png', '../img/sprite_subindo2_julia.png', '../img/sprite_subindo3_julia.png'],
+        desc: ['../img/sprite_desc1_julia.png', '../img/sprite_desc2_julia.png', '../img/sprite_desc3_julia.png'],
+        feit: ['../img/sprite_feit1_julia.png', '../img/sprite_feit2_julia.png'],
+        sofre: ['../img/sprite_sofre1_julia.png', '../img/sprite_sofre2_julia.png']
     },
     sonserina: {
-        subindo: ['/img/sprite_subindo1_luiza.png', '/img/sprite_subindo2_luiza.png', '/img/sprite_subindo3_luiza.png'],
-        desc: ['/img/sprite_desc1_luiza.png', '/img/sprite_desc2_luiza.png', '/img/sprite_desc3_luiza.png'],
-        feit: ['/img/sprite_feit_luiza.png'],
-        sofre: ['/img/sprite_sofre1_luiza.png', '/img/sprite_sofre2_luiza.png']
+        subindo: ['../img/sprite_subindo1_luiza.png', '../img/sprite_subindo2_luiza.png', '../img/sprite_subindo3_luiza.png'],
+        desc: ['../img/sprite_desc1_luiza.png', '../img/sprite_desc2_luiza.png', '../img/sprite_desc3_luiza.png'],
+        feit: ['../img/sprite_feit_luiza.png'],
+        sofre: ['../img/sprite_sofre1_luiza.png', '../img/sprite_sofre2_luiza.png']
     },
     lufalufa: {
-        subindo: ['/img/sprite_subindo1_evelin.png', '/img/sprite_subindo2_evelin.png', '/img/sprite_subindo3_evelin.png'],
-        desc: ['/img/sprite_desc1_evelin.png', '/img/sprite_desc2_evelin.png', '/img/sprite_desc3_evelin.png'],
-        feit: ['/img/sprite_feit1_evelin.png', '/img/sprite_feit2_evelin.png'],
-        sofre: ['/img/evelin_sofre1_evelin.png', '/img/evelin_sofre2_evelin.png']
+        subindo: ['../img/sprite_subindo1_evelin.png', '../img/sprite_subindo2_evelin.png', '../img/sprite_subindo3_evelin.png'],
+        desc: ['../img/sprite_desc1_evelin.png', '../img/sprite_desc2_evelin.png', '../img/sprite_desc3_evelin.png'],
+        feit: ['../img/sprite_feit1_evelin.png', '../img/sprite_feit2_evelin.png'],
+        sofre: ['../img/evelin_sofre1_evelin.png', '../img/evelin_sofre2_evelin.png']
     }
 };
 
@@ -122,6 +122,9 @@ const SPRITES_CASA = {
 
     carregarSprites(p1);
     carregarSprites(p2);
+
+    const imgFundo = new Image();
+    imgFundo.src = '../imagens/img_castelo.png';
 
     let projeteis = [];
     let tempoRestante = 60;
@@ -183,7 +186,7 @@ const SPRITES_CASA = {
         } else if (p2.vida > p1.vida) {
             vencedor = NOME_CASA[p2.casa];
         }
-        window.location.href = `/html/fimDuelo.html?vencedor=${encodeURIComponent(vencedor)}&p1=${p1.casa}&p2=${p2.casa}`;
+        window.location.href = `./fimDuelo.html?vencedor=${encodeURIComponent(vencedor)}&p1=${p1.casa}&p2=${p2.casa}`;
     }
 
     function loop() {
@@ -266,9 +269,15 @@ const SPRITES_CASA = {
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Fundo estrelado
-        ctx.fillStyle = "#05060f";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // Fundo do castelo
+        if (imgFundo.complete) {
+            ctx.drawImage(imgFundo, 0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "rgba(5, 6, 15, 0.35)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        } else {
+            ctx.fillStyle = "#05060f";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
 
         // Desenhar Jogadores
         [p1, p2].forEach(p => {

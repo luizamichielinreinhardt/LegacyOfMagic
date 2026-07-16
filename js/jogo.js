@@ -10,17 +10,24 @@ class Obj {
 }
 
 class Projetil extends Obj {
-    constructor(x, y, dir, dono, cor) {
+    constructor(x, y, dir, dono, cor, img) {
         super(x, y, 16, 16, cor);
         this.dir = dir;
+        this.dono = dono;
         this.vel = 12;
+        this.img = img;
     }
     mov() { this.x += this.vel * this.dir; }
     des(ctx) {
-        ctx.fillStyle = this.a;
-        ctx.beginPath();
-        ctx.arc(this.x + this.w/2, this.y + this.h/2, this.w/2, 0, Math.PI*2);
-        ctx.fill();
+        if (this.img && this.img.complete) {
+            const tam = this.w * 5;
+            ctx.drawImage(this.img, this.x + this.w/2 - tam/2, this.y + this.h/2 - tam/2, tam, tam);
+        } else {
+            ctx.fillStyle = this.a;
+            ctx.beginPath();
+            ctx.arc(this.x + this.w/2, this.y + this.h/2, this.w/2, 0, Math.PI*2);
+            ctx.fill();
+        }
     }
 }
 
@@ -32,23 +39,29 @@ const CORES_CASA = {
 
 const SPRITES_CASA = {
     grifinoria: {
-        subindo: ['/img/sprite_subindo1_julia.png', '/img/sprite_subindo2_julia.png', '/img/sprite_subindo3_julia.png'],
-        desc: ['/img/sprite_desc1_julia.png', '/img/sprite_desc2_julia.png', '/img/sprite_desc3_julia.png'],
-        feit: ['/img/sprite_feit1_julia.png', '/img/sprite_feit2_julia.png'],
-        sofre: ['/img/sprite_sofre1_julia.png', '/img/sprite_sofre2_julia.png']
+        subindo: ['../img/sprite_subindo1_julia.png', '../img/sprite_subindo2_julia.png', '../img/sprite_subindo3_julia.png'],
+        desc: ['../img/sprite_desc1_julia.png', '../img/sprite_desc2_julia.png', '../img/sprite_desc3_julia.png'],
+        feit: ['../img/sprite_feit1_julia.png', '../img/sprite_feit2_julia.png'],
+        sofre: ['../img/sprite_sofre1_julia.png', '../img/sprite_sofre2_julia.png']
     },
     sonserina: {
-        subindo: ['/img/sprite_subindo1_luiza.png', '/img/sprite_subindo2_luiza.png', '/img/sprite_subindo3_luiza.png'],
-        desc: ['/img/sprite_desc1_luiza.png', '/img/sprite_desc2_luiza.png', '/img/sprite_desc3_luiza.png'],
-        feit: ['/img/sprite_feit_luiza.png'],
-        sofre: ['/img/sprite_sofre1_luiza.png', '/img/sprite_sofre2_luiza.png']
+        subindo: ['../img/sprite_subindo1_luiza.png', '../img/sprite_subindo2_luiza.png', '../img/sprite_subindo3_luiza.png'],
+        desc: ['../img/sprite_desc1_luiza.png', '../img/sprite_desc2_luiza.png', '../img/sprite_desc3_luiza.png'],
+        feit: ['../img/sprite_feit_luiza.png'],
+        sofre: ['../img/sprite_sofre1_luiza.png', '../img/sprite_sofre2_luiza.png']
     },
     lufalufa: {
-        subindo: ['/img/sprite_subindo1_evelin.png', '/img/sprite_subindo2_evelin.png', '/img/sprite_subindo3_evelin.png'],
-        desc: ['/img/sprite_desc1_evelin.png', '/img/sprite_desc2_evelin.png', '/img/sprite_desc3_evelin.png'],
-        feit: ['/img/sprite_feit1_evelin.png', '/img/sprite_feit2_evelin.png'],
-        sofre: ['/img/evelin_sofre1_evelin.png', '/img/evelin_sofre2_evelin.png']
+        subindo: ['../img/sprite_subindo1_evelin.png', '../img/sprite_subindo2_evelin.png', '../img/sprite_subindo3_evelin.png'],
+        desc: ['../img/sprite_desc1_evelin.png', '../img/sprite_desc2_evelin.png', '../img/sprite_desc3_evelin.png'],
+        feit: ['../img/sprite_feit1_evelin.png', '../img/sprite_feit2_evelin.png'],
+        sofre: ['../img/evelin_sofre1_evelin.png', '../img/evelin_sofre2_evelin.png']
     }
+};
+
+const SPRITES_VILAO = {
+    voando: ['../img/vilaovoando1.png'],
+    atirando: ['../img/vilaoatirando1.png'],
+    derrotado: ['../img/vilaoderrotado1.png']
 };
 
 // Motor Principal 1 Player
@@ -63,7 +76,7 @@ const SPRITES_CASA = {
     const ctx = canvas.getContext("2d");
 
     let jogoPausado = false;
-    let vida = 3;
+    let vida = 5;
     let pontos = 0;
     let fase = 1;
 
@@ -101,9 +114,58 @@ const SPRITES_CASA = {
         }
     }
 
+    // Fundo de cada fase
+    const FUNDOS_FASE = {
+        1: '../imagens/img_quadribol.png',
+        2: '../imagens/img_floresta.png',
+        3: '../imagens/img_castelo.png'
+    };
+    const imgsFundo = {};
+    for (let f in FUNDOS_FASE) {
+        const imgFundo = new Image();
+        imgFundo.src = FUNDOS_FASE[f];
+        imgsFundo[f] = imgFundo;
+    }
+
     let projeteis = [];
-    let inimigos = [];
-    let spawnTimer = 0;
+
+    const vidaMaxVilao = 15;
+    const vilaoCentroY = canvas.height / 2 - 73;
+    const vilao = {
+        x: canvas.width - 320,
+        y: vilaoCentroY,
+        w: 200,
+        h: 146,
+        vida: vidaMaxVilao,
+        cooldownTiro: 190,
+        tempoOnda: 0,
+        imgs: {},
+        imgCarregada: false,
+        estadoAtual: 'voando',
+        estadoTempTimer: 0
+    };
+    let vitoriaEmAndamento = false;
+
+    // Pré-carregamento da imagem do Vilão
+    {
+        let totalImgsVilao = 0;
+        let carregadasVilao = 0;
+        for (let estado in SPRITES_VILAO) {
+            vilao.imgs[estado] = [];
+            SPRITES_VILAO[estado].forEach(caminho => {
+                totalImgsVilao++;
+                const imgObj = new Image();
+                imgObj.src = caminho;
+                imgObj.onload = () => {
+                    carregadasVilao++;
+                    if (carregadasVilao === totalImgsVilao) vilao.imgCarregada = true;
+                };
+                vilao.imgs[estado].push(imgObj);
+            });
+        }
+    }
+    const imgTiroVilao = new Image();
+    imgTiroVilao.src = '../img/tirovilao1.png';
 
     const teclas = {};
     window.addEventListener("keydown", (e) => {
@@ -121,6 +183,7 @@ const SPRITES_CASA = {
     function atualizarHUD() {
         document.getElementById("hud-vidas").textContent = "❤".repeat(vida);
         document.getElementById("hud-pontos").textContent = `${pontos} pts`;
+        document.getElementById("hud-fase").textContent = `Fase ${fase}`;
     }
 
     function loop() {
@@ -137,45 +200,60 @@ const SPRITES_CASA = {
         if (teclas["a"] && jogador.x > 50) jogador.x -= vel;
         if (teclas["d"] && jogador.x < canvas.width / 2) jogador.x += vel;
 
-        // Spawn de inimigos
-        spawnTimer++;
-        if (spawnTimer > 90) {
-            spawnTimer = 0;
-            inimigos.push({
-                x: canvas.width + 50,
-                y: Math.random() * (canvas.height - 200) + 100,
-                w: 50, h: 50, vel: 5 + fase, ativo: true
-            });
+        // Movimento do vilão (percorre a tela toda na vertical, mais rápido a cada fase)
+        const margemVilao = 85;
+        const topoVilao = margemVilao;
+        const baseVilao = canvas.height - vilao.h - margemVilao;
+        vilao.tempoOnda += 0.01 + fase * 0.005;
+        vilao.y = topoVilao + (baseVilao - topoVilao) * (0.5 + 0.5 * Math.sin(vilao.tempoOnda));
+
+        // Tiro automático do vilão
+        vilao.cooldownTiro--;
+        if (vilao.cooldownTiro <= 0) {
+            projeteis.push(new Projetil(vilao.x, vilao.y + vilao.h / 2, -1, 'vilao', '#ff3b3b', imgTiroVilao));
+            vilao.cooldownTiro = 220 - fase * 30;
+            vilao.estadoAtual = 'atirando';
+            vilao.estadoTempTimer = 15;
+        }
+
+        // Voltar o vilão para o estado 'voando' depois do tiro
+        if (vilao.estadoTempTimer > 0) {
+            vilao.estadoTempTimer--;
+        } else if (vilao.estadoAtual === 'atirando') {
+            vilao.estadoAtual = 'voando';
         }
 
         // Mover Projéteis
-        projeteis = projeteis.filter(p => {
-            p.mov();
-            return p.x < canvas.width;
-        });
+        projeteis.forEach(p => p.mov());
 
-        // Mover Inimigos
-        inimigos.forEach(inimigo => {
-            inimigo.x -= inimigo.vel;
+        // Colisão dos projéteis do jogador com o vilão
+        projeteis.forEach(proj => {
+            if (proj.dono === 'jogador' &&
+                proj.x < vilao.x + vilao.w && proj.x + proj.w > vilao.x &&
+                proj.y < vilao.y + vilao.h && proj.y + proj.h > vilao.y) {
+                proj.ativo = false;
+                vilao.vida--;
+                pontos += 100;
 
-            // Colisão do projétil com inimigo
-            projeteis.forEach(proj => {
-                if (proj.x < inimigo.x + inimigo.w && proj.x + proj.w > inimigo.x &&
-                    proj.y < inimigo.y + inimigo.h && proj.y + proj.h > inimigo.y) {
-                    inimigo.ativo = false;
-                    pontos += 100;
-                    atualizarHUD();
+                if (vilao.vida <= 5) fase = 3;
+                else if (vilao.vida <= 10) fase = 2;
 
-                    if (pontos >= 1000) {
-                        window.location.href = `/html/vitoria.html?casa=${casa}&pontos=${pontos}`;
-                    }
+                atualizarHUD();
+
+                if (vilao.vida <= 0 && !vitoriaEmAndamento) {
+                    vitoriaEmAndamento = true;
+                    vilao.estadoAtual = 'derrotado';
+                    setTimeout(() => {
+                        window.location.href = `./vitoria.html?casa=${casa}&pontos=${pontos}`;
+                    }, 600);
                 }
-            });
+            }
 
-            // Colisão do inimigo com jogador
-            if (inimigo.x < jogador.x + jogador.w && inimigo.x + inimigo.w > jogador.x &&
-                inimigo.y < jogador.y + jogador.h && inimigo.y + inimigo.h > jogador.y) {
-                inimigo.ativo = false;
+            // Colisão dos projéteis do vilão com o jogador
+            if (proj.dono === 'vilao' &&
+                proj.x < jogador.x + jogador.w && proj.x + proj.w > jogador.x &&
+                proj.y < jogador.y + jogador.h && proj.y + proj.h > jogador.y) {
+                proj.ativo = false;
                 vida--;
                 jogador.estadoAtual = 'sofre';
                 jogador.estadoTempTimer = 30;
@@ -183,12 +261,12 @@ const SPRITES_CASA = {
                 jogador.frameTick = 0;
                 atualizarHUD();
                 if (vida <= 0) {
-                    window.location.href = `/html/derrota.html?casa=${casa}&pontos=${pontos}`;
+                    window.location.href = `./derrota.html?casa=${casa}&pontos=${pontos}`;
                 }
             }
         });
 
-        inimigos = inimigos.filter(i => i.ativo && i.x > -50);
+        projeteis = projeteis.filter(p => p.ativo && p.x > -20 && p.x < canvas.width + 20);
 
         // Atualizar Animação
         if (jogador.estadoTempTimer > 0) {
@@ -215,9 +293,16 @@ const SPRITES_CASA = {
         // Renderização
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Fundo escuro
-        ctx.fillStyle = "#05060f";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // Fundo da fase atual
+        const fundoAtual = imgsFundo[fase];
+        if (fundoAtual && fundoAtual.complete) {
+            ctx.drawImage(fundoAtual, 0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "rgba(5, 6, 15, 0.35)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        } else {
+            ctx.fillStyle = "#05060f";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
 
         // Desenhar Jogador (Imagem ou Círculo)
         if (jogador.imgCarregada && framesArray && framesArray[jogador.frameAtual]) {
@@ -247,12 +332,35 @@ const SPRITES_CASA = {
             ctx.fill();
         }
 
-        // Desenhar Inimigos
-        ctx.fillStyle = "#8e3b3b";
-        ctx.shadowColor = "#8e3b3b";
-        inimigos.forEach(i => {
-            ctx.fillRect(i.x, i.y, i.w, i.h);
-        });
+        // Desenhar Vilão
+        if (vilao.imgCarregada) {
+            const framesVilao = vilao.imgs[vilao.estadoAtual] || vilao.imgs['voando'];
+            const escalaVilao = 2.2; // ← Mude isso se quiser o vilão maior ou menor
+            const drawWVilao = vilao.w * escalaVilao;
+            const drawHVilao = vilao.h * escalaVilao;
+            const offsetXVilao = -(drawWVilao - vilao.w) / 2;
+            const offsetYVilao = -(drawHVilao - vilao.h) / 2;
+
+            ctx.save();
+            ctx.translate(vilao.x + offsetXVilao + drawWVilao, vilao.y + offsetYVilao);
+            ctx.scale(-1, 1); // inverte o sprite do vilão no eixo horizontal
+            ctx.drawImage(framesVilao[0], 0, 0, drawWVilao, drawHVilao);
+            ctx.restore();
+        } else {
+            ctx.fillStyle = "#3b1f4d";
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = "#3b1f4d";
+            ctx.fillRect(vilao.x, vilao.y, vilao.w, vilao.h);
+            ctx.shadowBlur = 0;
+        }
+
+        // Barra de vida do vilão
+        const barraW = 300;
+        const barraX = canvas.width - barraW - 220;
+        ctx.fillStyle = "#222";
+        ctx.fillRect(barraX, 40, barraW, 18);
+        ctx.fillStyle = "#ff3b3b";
+        ctx.fillRect(barraX, 40, barraW * (vilao.vida / vidaMaxVilao), 18);
 
         // Desenhar Projéteis
         projeteis.forEach(p => p.des(ctx));

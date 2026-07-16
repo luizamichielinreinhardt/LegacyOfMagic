@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vitória! — Legacy of Magic</title>
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="../css/style.css">
+   <link rel="shortcut icon" href="../img/img_favicon.png" type="image/x-icon">
 </head>
+
 <body>
   <div id="fundo-magico" aria-hidden="true">
     <div class="estrelas"></div>
@@ -16,26 +19,37 @@
   <main class="pagina-cartela">
     <div class="cartela">
       <h1>🏆 Vitória!</h1>
+      <img id="sprite-resultado" class="sprite-resultado" alt="" style="display:none;">
       <p>Parabéns! Você concluiu o treinamento dos bruxos e protegeu Hogwarts!</p>
       <p id="pontos-finais"></p>
       <div class="menu-botoes">
-        <a id="btn-jogar-de-novo" class="botao botao--principal" href="/html/1player.html">Jogar novamente</a>
-        <a href="/html/index.html" class="botao botao--fantasma">Menu Principal</a>
+        <a id="btn-jogar-de-novo" class="botao botao--principal" href="./1player.html">Jogar novamente</a>
+        <a href="../index.html" class="botao botao--fantasma">Menu Principal</a>
       </div>
     </div>
   </main>
-//
   <script>
+    const PERSONAGEM_CASA = { grifinoria: 'julia', sonserina: 'luiza', lufalufa: 'evelin' };
+
     // Lê a casa e pontos da URL para personalizar a tela e o botão de reinício
     const params = new URLSearchParams(window.location.search);
     const casa = params.get("casa");
     const pontos = params.get("pontos");
     if (casa) {
-      document.getElementById("btn-jogar-de-novo").href = `/html/jogo.html?casa=${casa}`;
+      document.getElementById("btn-jogar-de-novo").href = `./jogo.html?casa=${casa}`;
     }
     if (pontos) {
       document.getElementById("pontos-finais").textContent = `Pontuação: ${pontos}`;
     }
+
+    const personagem = PERSONAGEM_CASA[casa];
+    if (personagem) {
+      const img = document.getElementById("sprite-resultado");
+      img.src = `../img/sprite_vitoria_${personagem}.png`;
+      img.alt = `${personagem} vitoriosa`;
+      img.style.display = "block";
+    }
   </script>
 </body>
+
 </html>
