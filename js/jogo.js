@@ -121,9 +121,17 @@ const SPRITES_VILAO = {
         3: '../imagens/img_castelo.png'
     };
     const imgsFundo = {};
+    let totalFundos = 0;
+    let fundosCarregados = 0;
+    let todosFundosCarregados = false;
     for (let f in FUNDOS_FASE) {
+        totalFundos++;
         const imgFundo = new Image();
         imgFundo.src = FUNDOS_FASE[f];
+        imgFundo.onload = () => {
+            fundosCarregados++;
+            if (fundosCarregados === totalFundos) todosFundosCarregados = true;
+        };
         imgsFundo[f] = imgFundo;
     }
 
@@ -164,7 +172,12 @@ const SPRITES_VILAO = {
             });
         }
     }
+
+    // Imagem do tiro do vilão — também entra na checagem de "tudo pronto",
+    // assim o primeiro tiro nunca aparece como uma bolinha antes de virar a imagem real.
+    let tiroVilaoCarregado = false;
     const imgTiroVilao = new Image();
+    imgTiroVilao.onload = () => { tiroVilaoCarregado = true; };
     imgTiroVilao.src = '../img/tirovilao1.png';
 
     const teclas = {};
@@ -307,22 +320,9 @@ const SPRITES_VILAO = {
         // Desenhar Jogador (Imagem ou Círculo)
         if (jogador.imgCarregada && framesArray && framesArray[jogador.frameAtual]) {
             let imgAtual = framesArray[jogador.frameAtual];
-            let drawW = jogador.w;
-            let drawH = jogador.h;
-            let offsetX = 0;
-            let offsetY = 0;
-
-            // --- AJUSTE DE TAMANHO DOS SPRITES ---
-            // Você pode alterar o número (ex: 1.75) para aumentar ou diminuir o sprite quando atira
-            if (jogador.estadoAtual === 'feit') {
-                const escalaFeit = 1.75; // ← Mude isso se quiser o tiro maior ou menor
-                drawW = jogador.w * escalaFeit;
-                drawH = jogador.h * escalaFeit;
-                offsetX = -(drawW - jogador.w) / 2;
-                offsetY = -(drawH - jogador.h) / 2;
-            }
-
-            ctx.drawImage(imgAtual, jogador.x + offsetX, jogador.y + offsetY, drawW, drawH);
+            // O sprite é sempre desenhado no mesmo tamanho (jogador.w x jogador.h),
+            // inclusive durante o feitiço, para não haver o "pulo" de aumentar/diminuir.
+            ctx.drawImage(imgAtual, jogador.x, jogador.y, jogador.w, jogador.h);
         } else {
             ctx.fillStyle = jogador.cor;
             ctx.shadowBlur = 15;
@@ -372,5 +372,29 @@ const SPRITES_VILAO = {
     window.pausarJogo = () => jogoPausado = true;
     window.retomarJogo = () => jogoPausado = false;
 
-    loop();
+    // Tela de carregamento: só entra no loop do jogo quando o sprite do
+    // jogador, do vilão, o tiro do vilão e os fundos das fases já estiverem
+    // prontos. Isso evita aparecer a "bolinha"/"quadrado" de espera.
+    function prontoParaComecar() {
+        return jogador.imgCarregada && vilao.imgCarregada && todosFundosCarregados && tiroVilaoCarregado;
+    }
+
+    function telaDeCarregamento() {
+        ctx.fillStyle = "#05060f";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#c9a227";
+        ctx.font = "bold 42px Georgia, serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("Carregando magia...", canvas.width / 2, canvas.height / 2);
+
+        if (prontoParaComecar()) {
+            loop();
+        } else {
+            requestAnimationFrame(telaDeCarregamento);
+        }
+    }
+
+    telaDeCarregamento();
 })();

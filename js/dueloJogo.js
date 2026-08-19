@@ -123,7 +123,9 @@ const SPRITES_CASA = {
     carregarSprites(p1);
     carregarSprites(p2);
 
+    let fundoCarregado = false;
     const imgFundo = new Image();
+    imgFundo.onload = () => { fundoCarregado = true; };
     imgFundo.src = '../imagens/img_castelo.png';
 
     let projeteis = [];
@@ -290,31 +292,18 @@ const SPRITES_CASA = {
             let imgAtual = framesArray ? framesArray[p.frameAtual] : null;
 
             if (p.imgCarregada && imgAtual) {
-                let drawW = p.w;
-                let drawH = p.h;
-                let offsetX = 0;
-                let offsetY = 0;
-
-                // --- AJUSTE DE TAMANHO DOS SPRITES ---
-                // Você pode alterar o número (ex: 1.75) para aumentar ou diminuir o sprite quando atira
-                if (p.estadoAtual === 'feit') {
-                    const escalaFeit = 1.75; // ← Mude isso se quiser o tiro maior ou menor
-                    drawW = p.w * escalaFeit;
-                    drawH = p.h * escalaFeit;
-                    offsetX = -(drawW - p.w) / 2;
-                    offsetY = -(drawH - p.h) / 2;
-                }
+                // O sprite é sempre desenhado no mesmo tamanho (p.w x p.h),
+                // inclusive durante o feitiço, para não haver o "pulo" de aumentar/diminuir.
 
                 // Se for o Player 2, espelha a imagem para ele olhar para a esquerda
                 if (p === p2) {
                     ctx.save();
                     ctx.translate(p.x + p.w, p.y);
                     ctx.scale(-1, 1);
-                    // Como a escala foi invertida, precisamos ajustar o X de forma oposta
-                    ctx.drawImage(imgAtual, -offsetX, offsetY, drawW, drawH);
+                    ctx.drawImage(imgAtual, 0, 0, p.w, p.h);
                     ctx.restore();
                 } else {
-                    ctx.drawImage(imgAtual, p.x + offsetX, p.y + offsetY, drawW, drawH);
+                    ctx.drawImage(imgAtual, p.x, p.y, p.w, p.h);
                 }
             } else {
                 ctx.beginPath();
@@ -351,5 +340,29 @@ const SPRITES_CASA = {
     window.pausarJogo = () => jogoPausado = true;
     window.retomarJogo = () => jogoPausado = false;
 
-    loop();
+    // Tela de carregamento: só entra no loop do duelo quando os sprites dos
+    // dois jogadores e o fundo do castelo já estiverem prontos.
+    // Isso evita aparecer a "bolinha" de espera nos personagens.
+    function prontoParaComecar() {
+        return p1.imgCarregada && p2.imgCarregada && fundoCarregado;
+    }
+
+    function telaDeCarregamento() {
+        ctx.fillStyle = "#05060f";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#c9a227";
+        ctx.font = "bold 42px Georgia, serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("Preparando o duelo...", canvas.width / 2, canvas.height / 2);
+
+        if (prontoParaComecar()) {
+            loop();
+        } else {
+            requestAnimationFrame(telaDeCarregamento);
+        }
+    }
+
+    telaDeCarregamento();
 })();
